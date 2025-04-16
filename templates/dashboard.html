@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - منتدى DzTeck</title>
+    <!-- Bootstrap RTL CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body class="dashboard-body">
+    <div class="sidebar" id="sidebar">
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if avatar %}
+                    <img src="{{ url_for('serve_avatars', path=avatar) }}" alt="صورة المستخدم" class="avatar">
+                {% else %}
+                    <img src="{{ DEFAULT_AVATAR }}" alt="صورة المستخدم" class="avatar">
+                {% endif %}
+                <button class="avatar-edit-button" type="button" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <div class="user-details">
+                <h5>{{ username }}</h5>
+                <span class="badge bg-{{ user_level.color }}">{{ user_level.name }}</span>
+                <p class="user-points"><i class="fas fa-award"></i> {{ points }} نقطة</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="active">
+                <i class="fas fa-th-large"></i>
+                <span>لوحة التحكم</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-user"></i>
+                <span>الملف الشخصي</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-envelope"></i>
+                <span>الرسائل</span>
+                <span class="badge rounded-pill bg-danger float-start">2</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-bell"></i>
+                <span>التنبيهات</span>
+                <span class="badge rounded-pill bg-danger float-start">5</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-newspaper"></i>
+                <span>مواضيعي</span>
+                <span class="badge rounded-pill bg-primary float-start">{{ threads|length }}</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-reply"></i>
+                <span>ردودي</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-star"></i>
+                <span>المفضلة</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>الإعدادات</span>
+            </a>
+            <a href="{{ url_for('logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>تسجيل الخروج</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <header class="header">
+            <div class="header-left">
+                <button id="toggleSidebar" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <a href="{{ url_for('index') }}">منتدى DzTeck</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="toggleTheme" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="header-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge rounded-pill bg-danger">5</span>
+                </div>
+                <div class="header-icon">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge rounded-pill bg-danger">2</span>
+                </div>
+                <a href="{{ url_for('index') }}" class="return-forum">
+                    <i class="fas fa-home"></i>
+                    <span>العودة للمنتدى</span>
+                </a>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="container-fluid py-4">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="mb-4">لوحة التحكم</h1>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            مرحبًا بك في لوحة التحكم الخاصة بك
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Stats Cards -->
+                    <div class="col-md-3 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-icon bg-primary">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>{{ threads|length }}</h3>
+                                <p>المواضيع</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-icon bg-success">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>0</h3>
+                                <p>الردود</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-icon bg-info">
+                                <i class="fas fa-thumbs-up"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>{{ user_reactions|length }}</h3>
+                                <p>التفاعلات</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-icon bg-warning">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>{{ points }}</h3>
+                                <p>النقاط</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Recent Activity -->
+                    <div class="col-md-6 mb-4">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h5>آخر النشاطات</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list">
+                                    {% for thread in threads %}
+                                    <li class="activity-item">
+                                        <div class="activity-icon bg-primary">
+                                            <i class="fas fa-pen"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p>قمت بإنشاء موضوع: <a href="{{ url_for('index', view='thread', id=thread.id) }}">{{ thread.title }}</a></p>
+                                            <small>{{ time_ago(thread.timestamp) }}</small>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                    {% if threads|length == 0 %}
+                                    <li class="text-center p-3 text-muted">
+                                        لا توجد نشاطات حتى الآن
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Level Progress -->
+                    <div class="col-md-6 mb-4">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h5>مستوى العضوية</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="level-info mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <span class="badge bg-{{ user_level.color }} mb-2">{{ user_level.name }}</span>
+                                            <h6 class="mb-0">{{ points }} نقطة</h6>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted">المستوى التالي: {{ user_level.next_level_name }}</small>
+                                            <h6 class="mb-0">{{ user_level.next_level_points - points }} نقطة متبقية</h6>
+                                        </div>
+                                    </div>
+                                    {% set progress_percentage = (points / user_level.next_level_points) * 100 if user_level.next_level_points > 0 else 100 %}
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-{{ user_level.color }}" role="progressbar" style="width: {{ progress_percentage }}%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="levels-list">
+                                    <div class="level-item d-flex align-items-center mb-2">
+                                        <div class="level-icon bg-secondary me-3">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="level-details flex-grow-1">
+                                            <h6 class="mb-0">عضو جديد</h6>
+                                            <small>0 نقطة</small>
+                                        </div>
+                                    </div>
+                                    <div class="level-item d-flex align-items-center mb-2">
+                                        <div class="level-icon bg-success me-3">
+                                            <i class="fas fa-user-check"></i>
+                                        </div>
+                                        <div class="level-details flex-grow-1">
+                                            <h6 class="mb-0">عضو نشط</h6>
+                                            <small>50 نقطة</small>
+                                        </div>
+                                    </div>
+                                    <div class="level-item d-flex align-items-center mb-2">
+                                        <div class="level-icon bg-primary me-3">
+                                            <i class="fas fa-user-shield"></i>
+                                        </div>
+                                        <div class="level-details flex-grow-1">
+                                            <h6 class="mb-0">عضو متميز</h6>
+                                            <small>200 نقطة</small>
+                                        </div>
+                                    </div>
+                                    <div class="level-item d-flex align-items-center">
+                                        <div class="level-icon bg-danger me-3">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div class="level-details flex-grow-1">
+                                            <h6 class="mb-0">عضو محترف</h6>
+                                            <small>500 نقطة</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Avatar Change Modal -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تغيير الصورة الرمزية</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('upload_avatar') }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">اختر صورة جديدة</label>
+                            <input class="form-control" type="file" id="avatar" name="avatar" required>
+                            <div class="form-text">أقصى حجم للصورة: 2 ميجابايت. الصيغ المدعومة: JPG، JPEG، PNG</div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">تحديث الصورة</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/assets/js/dashboard.js"></script>
+</body>
+</html>
